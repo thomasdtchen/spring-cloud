@@ -5,13 +5,18 @@ spring:
     name: gateway
   cloud:
     gateway:
+      discovery:
+        locator:
+          enabled: true  # dynamic route
       routes:
         - id: payment_routh
-          uri: http://localhost:8001
+          #uri: http://localhost:8001
+          uri: lb://payment
           predicates:
             - Path=/payment/get/**
         - id: payment_routh2
           uri: http://localhost:8001
+          #uri: lb://payment
           predicates:
             - Path=/payment/lb/**
 
@@ -21,3 +26,9 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://${eureka.instance.hostname}:8761/eureka/
+
+logging:
+  level:
+    org:
+      springframework:
+        security: trace

@@ -1,15 +1,19 @@
 package thomas.spring;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/payment")
+@Slf4j
 public class PaymentController {
 
     private final PaymentRepository paymentRepository;
@@ -18,12 +22,15 @@ public class PaymentController {
         this.paymentRepository = paymentRepository;
     }
     @GetMapping("/get/{id}")
-    public Mono<Payment> getPayment(@PathVariable int id){
-        return Mono.just(this.paymentRepository.findPaymentById(id));
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public Payment getPayment(@PathVariable int id){
+        log.info("== getPayment ==");
+        return this.paymentRepository.findPaymentById(id);
     }
 
     @GetMapping("/lb")
-    public Flux<Payment> lbPayment(){
-        return Flux.fromIterable(this.paymentRepository.findAllPayments());
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public List<Payment> lbPayment(){
+        return this.paymentRepository.findAllPayments();
     }
 }

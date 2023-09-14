@@ -9,3 +9,9 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://${eureka.instance.hostname}:8761/eureka/
+
+logging:
+  level:
+    org:
+      springframework:
+        security: trace
